@@ -1,0 +1,12 @@
+{
+  "hideGenerationTimestamp": true,
+  "disallowAdditionalPropertiesIfNotPresent": false,
+  "licenseName": "MIT",
+  "gitUserId": "halyard-labs",
+  "gitRepoId": "moonemail-sdks",
+  "packageName": "moonemail",
+  "projectName": "moonemail",
+  "packageVersion": "0.1.0",
+  "packageUrl": "https://github.com/halyard-labs/moonemail-sdks",
+  "library": "urllib3"
+}

@@ -1,0 +1,13 @@
+{
+  "hideGenerationTimestamp": true,
+  "disallowAdditionalPropertiesIfNotPresent": false,
+  "licenseName": "MIT",
+  "gitUserId": "halyard-labs",
+  "gitRepoId": "moonemail-sdks",
+  "npmName": "moonemail",
+  "npmVersion": "0.1.0",
+  "supportsES6": true,
+  "typescriptThreePlus": true,
+  "dateLibrary": "string",
+  "enumUnknownDefaultCase": true
+}
