@@ -49,6 +49,10 @@ python -m unittest discover -s tests -v
 (cd go && go test ./... && go vet ./...)
 ```
 
+The **Import deployed API contract** GitHub Action can run this update and open
+a review PR after testing all three clients. Enable GitHub Actions PR creation
+in repository settings before using it. It never merges or publishes automatically.
+
 OpenAPI Generator is pinned to 7.26.0. Generated files are never hand-edited;
 small ergonomic wrappers live in `overlays/`. CI regenerates and fails on drift,
 then builds, tests and packages all three SDKs. Request/response schemas are shared;

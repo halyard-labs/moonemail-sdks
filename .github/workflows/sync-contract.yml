@@ -1,0 +1,43 @@
+name: Import deployed API contract
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.x'
+      - run: pip install -r requirements-codegen.txt
+      - run: python scripts/sync-spec.py && python scripts/generate.py
+      - run: npm ci --ignore-scripts --prefix typescript && npm run build --prefix typescript
+      - run: node --test tests/typescript.test.cjs
+      - run: typescript/node_modules/.bin/tsc --noEmit --strict --lib es2022,dom tests/typescript-types.ts
+      - run: pip install ./python && python -m unittest discover -s tests -v
+      - run: cd go && go test ./... && go vet ./...
+      - name: Propose reviewed contract update
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if test -z "$(git status --porcelain)"; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          branch="automation/api-contract-${GITHUB_RUN_ID}"
+          git switch -c "$branch"
+          git add spec typescript python go
+          git commit -m 'Regenerate SDKs from the deployed public API contract'
+          git push origin "$branch"
+          cat > /tmp/sdk-pr-body.md <<'BODY'
+          Imports the deployed Moonemail public API contract and regenerates all three clients. Transport tests and builds passed in the import workflow. Review breaking changes and bump versions before releasing; this does not publish packages automatically.
+          BODY
+          gh pr create --base main --head "$branch" --title 'Update SDKs from deployed API contract' --body-file /tmp/sdk-pr-body.md
