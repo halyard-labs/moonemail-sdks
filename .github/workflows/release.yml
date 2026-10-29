@@ -133,7 +133,7 @@ jobs:
           from urllib.error import HTTPError
           from urllib.request import urlopen
           version = os.environ['VERSION']
-          artifact = Path(f'artifacts/moonemail-{version}.tgz')
+          artifact = Path(f'artifacts/moonemail-{version}.tgz').resolve(strict=True)
           try:
               with urlopen(f'https://registry.npmjs.org/moonemail/{version}') as r: package = json.load(r)
           except HTTPError as e:
