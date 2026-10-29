@@ -21,7 +21,13 @@ class ReleaseTests(unittest.TestCase):
         self.assertTrue(release.decide(self.old, new, '0.1.0'))
     def test_rollback_does_not_publish_old_code(self):
         with self.assertRaisesRegex(ValueError, 'older'):
-            release.decide(self.old, self.old, '0.2.0')
+            release.decide({'info': {'version': '0.2.0'}}, self.old, '0.2.0')
     def test_rejects_prereleases_and_invalid_version(self):
         for value in ['1.2.3-rc.1', '01.2.3', 'v1.2.3', '1.2', '1.2.3; echo oops']:
             with self.assertRaises(ValueError): release.semver(value)
+
+    def test_sdk_only_patch_does_not_look_like_api_rollback(self):
+        self.assertFalse(release.decide(self.old, self.old, '0.1.1'))
+    def test_next_sdk_version_never_reuses_a_patch_release(self):
+        self.assertEqual(release.next_sdk_version('0.1.1', '0.1.1'), '0.1.2')
+        self.assertEqual(release.next_sdk_version('0.2.0', '0.1.1'), '0.2.0')
