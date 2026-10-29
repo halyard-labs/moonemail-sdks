@@ -36,6 +36,10 @@ the SDK version; an unchanged API remains a no-op after an SDK-only release.
 
 ## Registry setup
 
+Both trusted publishers are configured. `RELEASE_AUTOMATION_ENABLED=true` and
+`PYPI_PUBLISHING_ENABLED=true` enable API monitoring and both registry releases.
+The setup below documents how to recreate these connections.
+
 Create GitHub environments `npm` and `pypi`, permitting the main branch and stable
 `v*` tags (the workflow validates the exact version). Configure trusted publishers:
 
@@ -55,7 +59,7 @@ A missing enabled registry version is retried on the next scheduled check. An
 existing version is never overwritten. To retry explicitly:
 
 ```sh
-gh workflow run release.yml --ref main -f version=0.1.0
+gh workflow run release.yml --ref main -f version=0.1.1
 ```
 
 Watch the workflow result and verify fresh installs from each enabled registry.

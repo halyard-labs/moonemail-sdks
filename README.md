@@ -11,16 +11,16 @@ Moonemail's API reference: sending, receiving, inboxes, domains and domain healt
 webhooks and delivery logs, suppressions, API keys and permissions. Dashboard
 sessions, billing and OAuth consent are intentionally excluded.
 
-## Install v0.1.0
+## Install v0.1.1
 
 JavaScript/TypeScript is published on [npm](https://www.npmjs.com/package/moonemail).
-Python is currently available as a GitHub Release wheel while PyPI account setup
-is completed. Go uses the module tag. Pin versions for production integrations.
+Python is published on [PyPI](https://pypi.org/project/moonemail/). Go uses the
+module tag. Pin versions for production integrations.
 
 ```sh
-npm install moonemail@0.1.0
-pip install https://github.com/halyard-labs/moonemail-sdks/releases/download/v0.1.0/moonemail-0.1.0-py3-none-any.whl
-go get github.com/halyard-labs/moonemail-sdks/go@v0.1.0
+npm install moonemail@0.1.1
+pip install moonemail==0.1.1
+go get github.com/halyard-labs/moonemail-sdks/go@v0.1.1
 ```
 
 See [TypeScript](typescript/README.md), [Python](python/README.md), and
