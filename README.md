@@ -13,12 +13,12 @@ sessions, billing and OAuth consent are intentionally excluded.
 
 ## Install v0.1.0
 
-Packages are distributed through this repository's GitHub Releases. npm and PyPI
-registry publication is not yet enabled. Do not install similarly named packages
-from a registry until this README links to the verified listing.
+JavaScript/TypeScript is published on [npm](https://www.npmjs.com/package/moonemail).
+Python is currently available as a GitHub Release wheel while PyPI account setup
+is completed. Go uses the module tag. Pin versions for production integrations.
 
 ```sh
-npm install https://github.com/halyard-labs/moonemail-sdks/releases/download/v0.1.0/moonemail-0.1.0.tgz
+npm install moonemail@0.1.0
 pip install https://github.com/halyard-labs/moonemail-sdks/releases/download/v0.1.0/moonemail-0.1.0-py3-none-any.whl
 go get github.com/halyard-labs/moonemail-sdks/go@v0.1.0
 ```
@@ -49,9 +49,12 @@ python -m unittest discover -s tests -v
 (cd go && go test ./... && go vet ./...)
 ```
 
-The **Import deployed API contract** GitHub Action can run this update and open
-a review PR after testing all three clients. Enable GitHub Actions PR creation
-in repository settings before using it. It never merges or publishes automatically.
+The **Release new API version** workflow checks the deployed API hourly and can
+be dispatched manually. A newer stable API version regenerates and tests all three
+clients, commits the public snapshot, tags the release and dispatches publishing.
+A changed contract without a version bump fails; an unchanged contract is a no-op.
+The older manual import workflow remains available for reviewing contract changes.
+See [RELEASING.md](RELEASING.md) for activation, permissions and retries.
 
 OpenAPI Generator is pinned to 7.26.0. Generated files are never hand-edited;
 small ergonomic wrappers live in `overlays/`. CI regenerates and fails on drift,
@@ -73,7 +76,7 @@ compare booleans instead of strings. The canonical contract is left unchanged.
 
 ## Release
 
-See [RELEASING.md](RELEASING.md). Registry publication needs the maintainers'
-registry accounts and trusted-publishing setup. No registry tokens are stored here.
+See [RELEASING.md](RELEASING.md). Registry publishing uses scoped OIDC trusted
+publishers. No registry tokens are stored here.
 
 Support: support@moonemail.co. See [SECURITY.md](SECURITY.md) for security reports.

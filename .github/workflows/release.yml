@@ -1,0 +1,185 @@
+name: Publish SDKs
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Existing stable release version (for example 0.1.0)'
+        required: true
+        type: string
+concurrency:
+  group: sdk-publishing
+  cancel-in-progress: false
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - id: version
+        env:
+          REQUESTED: ${{ inputs.version || github.ref_name }}
+        run: |
+          python - <<'PY'
+          import os, re
+          version = os.environ['REQUESTED'].removeprefix('v')
+          if not re.fullmatch(r'(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)', version):
+              raise SystemExit('Expected stable major.minor.patch version')
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f: f.write(f'version={version}\n')
+          PY
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: refs/tags/v${{ steps.version.outputs.version }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+        with:
+          go-version: '1.23.x'
+      - name: Check immutable release identity
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          git merge-base --is-ancestor HEAD origin/main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse "go/v${VERSION}^{commit}")"
+          python - <<'PY'
+          import json, os, tomllib
+          from pathlib import Path
+          version = os.environ['VERSION']
+          assert json.loads(Path('typescript/package.json').read_text())['version'] == version
+          assert tomllib.loads(Path('python/pyproject.toml').read_text())['project']['version'] == version
+          for lang, key in [('typescript','npmVersion'),('python','packageVersion'),('go','packageVersion')]:
+              assert json.loads(Path(f'config/{lang}.json').read_text())[key] == version
+          PY
+      - run: pip install -r requirements-codegen.txt build twine
+      - run: python scripts/check-generated.py
+      - run: npm ci --ignore-scripts --prefix typescript && npm run build --prefix typescript
+      - run: node --test tests/typescript.test.cjs
+      - run: typescript/node_modules/.bin/tsc --noEmit --strict --lib es2022,dom tests/typescript-types.ts
+      - run: pip install ./python && python -m unittest discover -s tests -v
+      - run: cd go && go test ./... && go vet ./...
+      - name: Build packages or reuse immutable release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          mkdir -p artifacts
+          if gh release view "v${VERSION}" >/dev/null 2>&1; then
+            gh release download "v${VERSION}" --dir artifacts
+            (cd artifacts && sha256sum -c SHA256SUMS)
+          else
+            npm pack ./typescript --pack-destination artifacts
+            python -m build python --outdir artifacts
+            (cd artifacts && sha256sum ./*.tgz ./*.whl ./*.tar.gz > SHA256SUMS)
+          fi
+          python -m twine check artifacts/*.whl artifacts/*.tar.gz
+      - name: Test the exact distribution artifacts
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          scratch=$(mktemp -d)
+          npm install --ignore-scripts --prefix "$scratch" "$PWD/artifacts/moonemail-${VERSION}.tgz"
+          SDK_PACKAGE="$scratch/node_modules/moonemail" node --test tests/typescript.test.cjs
+          pip install --force-reinstall artifacts/*.whl
+          python -m unittest discover -s tests -v
+      - name: Save immutable release assets before publishing
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          if ! gh release view "v${VERSION}" >/dev/null 2>&1; then
+            gh release create "v${VERSION}" artifacts/* --verify-tag --title "Moonemail SDKs ${VERSION}" --generate-notes
+          fi
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: registry-packages
+          path: artifacts/
+          if-no-files-found: error
+  npm:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: registry-packages
+          path: artifacts
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+      - run: npm install --global npm@11.6.4
+      - name: Publish with OIDC (or verify existing identical package)
+        env:
+          VERSION: ${{ needs.build.outputs.version }}
+          NODE_AUTH_TOKEN: ''
+        run: |
+          python - <<'PY'
+          import hashlib, json, os, subprocess
+          from pathlib import Path
+          from urllib.error import HTTPError
+          from urllib.request import urlopen
+          version = os.environ['VERSION']
+          artifact = Path(f'artifacts/moonemail-{version}.tgz')
+          try:
+              with urlopen(f'https://registry.npmjs.org/moonemail/{version}') as r: package = json.load(r)
+          except HTTPError as e:
+              if e.code != 404: raise
+              subprocess.run(['npm','publish',str(artifact),'--access','public','--provenance','--ignore-scripts'], check=True)
+          else:
+              if package['dist']['shasum'] != hashlib.sha1(artifact.read_bytes()).hexdigest():
+                  raise SystemExit('Existing npm version differs from release artifact')
+              print('Identical npm package already published')
+          PY
+  pypi:
+    if: vars.PYPI_PUBLISHING_ENABLED == 'true'
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: registry-packages
+          path: artifacts
+      - name: Prepare Python artifacts and verify existing files
+        env:
+          VERSION: ${{ needs.build.outputs.version }}
+        run: |
+          python - <<'PY'
+          import hashlib, json, os, shutil
+          from pathlib import Path
+          from urllib.error import HTTPError
+          from urllib.request import urlopen
+          version = os.environ['VERSION']
+          try:
+              with urlopen(f'https://pypi.org/pypi/moonemail/{version}/json') as r: files = json.load(r)['urls']
+          except HTTPError as e:
+              if e.code != 404: raise
+              files = []
+          published = {f['filename']: f['digests']['sha256'] for f in files}
+          Path('dist').mkdir()
+          for path in Path('artifacts').iterdir():
+              if path.suffix != '.whl' and not path.name.endswith('.tar.gz'): continue
+              if path.name in published and published[path.name] != hashlib.sha256(path.read_bytes()).hexdigest():
+                  raise SystemExit('Existing PyPI file differs from release artifact')
+              shutil.copy2(path, Path('dist') / path.name)
+          PY
+      - uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # release/v1
+        with:
+          skip-existing: true
