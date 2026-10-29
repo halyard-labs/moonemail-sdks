@@ -4,8 +4,8 @@
 
 The application owns the version in `packages/contract/package.json`. Its generator
 copies that version into OpenAPI. Review the contract and bump that version for
-public API changes before deploying. All three SDKs follow that stable version;
-use a patch API version bump for an SDK-only fix too. Never repoint a released tag.
+public API changes before deploying. All three SDKs share one distribution version. A new API version uses that version
+or the next SDK patch, whichever is greater, so SDK-only fixes never cause reuse. Never repoint a released tag.
 
 Once `RELEASE_AUTOMATION_ENABLED=true` is set in this repository, **Release new API
 version** (`api-release.yml`) checks the deployed `/openapi.json` hourly (minute 17).
@@ -23,6 +23,16 @@ and package versions, checks generation, runs transport/type tests, and installs
 the exact npm tarball and Python wheel for another transport test. It saves those
 artifacts plus SHA256SUMS in a GitHub Release before publishing. Retries reuse the
 immutable assets and check existing registry files against their checksums.
+
+## SDK-only fixes
+
+For a wrapper, packaging or documentation fix, bump all `config/*.json` client
+versions, regenerate, refresh the npm lockfile and run CI in a pull request. After
+merging, tag the reviewed commit `vX.Y.Z` and `go/vX.Y.Z` and push both tags atomically.
+The tag triggers publishing. Leave `spec/openapi.json` unchanged: it records the
+API version behind that SDK, which may differ from the SDK distribution version.
+The API monitor compares API versions to the previous imported contract, not to
+the SDK version; an unchanged API remains a no-op after an SDK-only release.
 
 ## Registry setup
 

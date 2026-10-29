@@ -19,13 +19,19 @@ def semver(value):
 
 def decide(previous, incoming, current):
     target = incoming['info']['version']
-    if semver(target) < semver(current):
+    semver(current)
+    if semver(target) < semver(previous['info']['version']):
         raise ValueError('Refusing to release an older API version')
-    if target == current:
+    if target == previous['info']['version']:
         if incoming != previous:
             raise ValueError('API contract changed without a version bump')
         return False
     return True
+
+
+def next_sdk_version(api_version, current):
+    major, minor, patch = semver(current)
+    return '.'.join(map(str, max(semver(api_version), (major, minor, patch + 1))))
 
 
 def main():
@@ -40,7 +46,7 @@ def main():
     subprocess.run(cmd, check=True)
     new = json.loads((ROOT / 'spec/openapi.json').read_text())
     changed = decide(old, new, current)
-    version = new['info']['version']
+    version = next_sdk_version(new['info']['version'], current) if changed else current
     if changed:
         for name, field in [('typescript', 'npmVersion'), ('python', 'packageVersion'), ('go', 'packageVersion')]:
             path = ROOT / f'config/{name}.json'
@@ -52,7 +58,7 @@ def main():
     if os.environ.get('GITHUB_OUTPUT'):
         with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
             output.write(f'changed={str(changed).lower()}\nversion={version}\n')
-    print(f'API {version}: ' + ('prepared release' if changed else 'already current'))
+    print(f"API {new['info']['version']} / SDK {version}: " + ('prepared release' if changed else 'already current'))
 
 
 if __name__ == '__main__':

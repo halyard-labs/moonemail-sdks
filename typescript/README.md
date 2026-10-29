@@ -1,6 +1,6 @@
 # Moonemail JavaScript / TypeScript
 
-Install the `.tgz` package linked in the [release](https://github.com/halyard-labs/moonemail-sdks/releases/tag/v0.1.0).
+Install from [npm](https://www.npmjs.com/package/moonemail): `npm install moonemail`.
 Node.js 22+; use only on your server when supplying an API key.
 
 ```ts
