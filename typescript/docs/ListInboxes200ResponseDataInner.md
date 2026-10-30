@@ -12,6 +12,7 @@ Name | Type
 `status` | string
 `createdAt` | string
 `aliases` | Array&lt;string&gt;
+`domainId` | string
 
 ## Example
 
@@ -26,6 +27,7 @@ const example = {
   "status": null,
   "createdAt": null,
   "aliases": null,
+  "domainId": null,
 } satisfies ListInboxes200ResponseDataInner
 
 console.log(example)

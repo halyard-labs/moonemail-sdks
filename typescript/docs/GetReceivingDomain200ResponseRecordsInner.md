@@ -1,32 +1,28 @@
 
-# CreateInbox200Response
+# GetReceivingDomain200ResponseRecordsInner
 
 
 ## Properties
 
 Name | Type
 ------------ | -------------
-`id` | string
+`type` | string
 `name` | string
-`address` | string
-`status` | string
-`createdAt` | string
-`aliases` | Array&lt;string&gt;
+`value` | string
+`priority` | string
 
 ## Example
 
 ```typescript
-import type { CreateInbox200Response } from 'moonemail'
+import type { GetReceivingDomain200ResponseRecordsInner } from 'moonemail'
 
 // TODO: Update the object below with actual values
 const example = {
-  "id": null,
+  "type": null,
   "name": null,
-  "address": null,
-  "status": null,
-  "createdAt": null,
-  "aliases": null,
-} satisfies CreateInbox200Response
+  "value": null,
+  "priority": null,
+} satisfies GetReceivingDomain200ResponseRecordsInner
 
 console.log(example)
 
@@ -35,7 +31,7 @@ const exampleJSON: string = JSON.stringify(example)
 console.log(exampleJSON)
 
 // Parse the JSON string back to an object
-const exampleParsed = JSON.parse(exampleJSON) as CreateInbox200Response
+const exampleParsed = JSON.parse(exampleJSON) as GetReceivingDomain200ResponseRecordsInner
 console.log(exampleParsed)
 ```
 

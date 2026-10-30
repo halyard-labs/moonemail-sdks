@@ -9,6 +9,7 @@ Method | HTTP request | Description
 [**GetReceivedRaw**](ReceivingAPI.md#GetReceivedRaw) | **Get** /emails/receiving/{id}/raw | Get received raw
 [**ListReceivedAttachments**](ReceivingAPI.md#ListReceivedAttachments) | **Get** /emails/receiving/{id}/attachments | List received attachments
 [**ListReceivedEmails**](ReceivingAPI.md#ListReceivedEmails) | **Get** /emails/receiving | List received emails
+[**ListReceivingDomains**](ReceivingAPI.md#ListReceivingDomains) | **Get** /receiving/domains | List receiving domains
 
 
 
@@ -348,6 +349,67 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**ListReceivedEmails200Response**](ListReceivedEmails200Response.md)
+
+### Authorization
+
+[bearerKey](../README.md#bearerKey)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## ListReceivingDomains
+
+> ListReceivingDomains200Response ListReceivingDomains(ctx).Execute()
+
+List receiving domains
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/halyard-labs/moonemail-sdks/go"
+)
+
+func main() {
+
+	configuration := openapiclient.NewConfiguration()
+	apiClient := openapiclient.NewAPIClient(configuration)
+	resp, r, err := apiClient.ReceivingAPI.ListReceivingDomains(context.Background()).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `ReceivingAPI.ListReceivingDomains``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `ListReceivingDomains`: ListReceivingDomains200Response
+	fmt.Fprintf(os.Stdout, "Response from `ReceivingAPI.ListReceivingDomains`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+This endpoint does not need any parameter.
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiListReceivingDomainsRequest struct via the builder pattern
+
+
+### Return type
+
+[**ListReceivingDomains200Response**](ListReceivingDomains200Response.md)
 
 ### Authorization
 

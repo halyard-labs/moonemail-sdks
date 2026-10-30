@@ -9,6 +9,7 @@ All URIs are relative to *https://api.moonemail.co*
 | [**getReceivedRaw**](ReceivingApi.md#getreceivedraw) | **GET** /emails/receiving/{id}/raw | Get received raw |
 | [**listReceivedAttachments**](ReceivingApi.md#listreceivedattachments) | **GET** /emails/receiving/{id}/attachments | List received attachments |
 | [**listReceivedEmails**](ReceivingApi.md#listreceivedemails) | **GET** /emails/receiving | List received emails |
+| [**listReceivingDomains**](ReceivingApi.md#listreceivingdomains) | **GET** /receiving/domains | List receiving domains |
 
 
 
@@ -358,6 +359,70 @@ example().catch(console.error);
 ### Return type
 
 [**ListReceivedEmails200Response**](ListReceivedEmails200Response.md)
+
+### Authorization
+
+[bearerKey](../README.md#bearerKey)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: `application/json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | Success |  -  |
+| **0** | API error |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
+## listReceivingDomains
+
+> ListReceivingDomains200Response listReceivingDomains()
+
+List receiving domains
+
+List custom receiving domains for this team.  Required permission: &#x60;domains:read&#x60;.
+
+### Example
+
+```ts
+import {
+  Configuration,
+  ReceivingApi,
+} from 'moonemail';
+import type { ListReceivingDomainsRequest } from 'moonemail';
+
+async function example() {
+  console.log("🚀 Testing moonemail SDK...");
+  const config = new Configuration({ 
+    // Configure HTTP bearer authorization: bearerKey
+    accessToken: "YOUR BEARER TOKEN",
+  });
+  const api = new ReceivingApi(config);
+
+  try {
+    const data = await api.listReceivingDomains();
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+This endpoint does not need any parameter.
+
+### Return type
+
+[**ListReceivingDomains200Response**](ListReceivingDomains200Response.md)
 
 ### Authorization
 

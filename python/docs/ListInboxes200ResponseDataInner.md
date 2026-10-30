@@ -11,6 +11,7 @@ Name | Type | Description | Notes
 **status** | **str** |  | 
 **created_at** | **str** |  | 
 **aliases** | **List[str]** |  | [optional] 
+**domain_id** | **str** |  | [optional] 
 
 ## Example
 

@@ -6,11 +6,15 @@ All URIs are relative to *https://api.moonemail.co*
 |------------- | ------------- | -------------|
 | [**createDomain**](DomainsApi.md#createdomainoperation) | **POST** /domains | Create domain |
 | [**deleteDomain**](DomainsApi.md#deletedomain) | **DELETE** /domains/{id} | Delete domain |
+| [**disableReceivingDomain**](DomainsApi.md#disablereceivingdomain) | **POST** /domains/{id}/receiving/disable | Disable receiving domain |
 | [**getDomain**](DomainsApi.md#getdomain) | **GET** /domains/{id} | Get domain |
 | [**getDomainHealth**](DomainsApi.md#getdomainhealth) | **GET** /domains/{id}/health | Get domain health |
+| [**getReceivingDomain**](DomainsApi.md#getreceivingdomain) | **GET** /domains/{id}/receiving | Get receiving domain |
 | [**listDomains**](DomainsApi.md#listdomains) | **GET** /domains | List domains |
+| [**prepareReceivingDomain**](DomainsApi.md#preparereceivingdomain) | **POST** /domains/{id}/receiving | Prepare receiving domain |
 | [**updateDomain**](DomainsApi.md#updatedomainoperation) | **PATCH** /domains/{id} | Update domain |
 | [**verifyDomain**](DomainsApi.md#verifydomain) | **POST** /domains/{id}/verify | Verify domain |
+| [**verifyReceivingDomain**](DomainsApi.md#verifyreceivingdomain) | **POST** /domains/{id}/receiving/verify | Verify receiving domain |
 
 
 
@@ -92,7 +96,7 @@ example().catch(console.error);
 
 Delete domain
 
-Remove a sending domain, interrupting sending through it. Only when explicitly requested.  Required permission: &#x60;domains:delete&#x60;.
+Remove a domain, interrupting sending and receiving through it. Stored received messages remain subject to retention. Only when explicitly requested.  Required permission: &#x60;domains:delete&#x60;.
 
 ### Example
 
@@ -138,6 +142,78 @@ example().catch(console.error);
 ### Return type
 
 [**DeleteDomain200Response**](DeleteDomain200Response.md)
+
+### Authorization
+
+[bearerKey](../README.md#bearerKey)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: `application/json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | Success |  -  |
+| **0** | API error |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
+## disableReceivingDomain
+
+> PrepareReceivingDomain200Response disableReceivingDomain(id)
+
+Disable receiving domain
+
+Disable all incoming mail on this subdomain. Does not change DNS or delete stored messages.  Required permission: &#x60;domains:write&#x60;.
+
+### Example
+
+```ts
+import {
+  Configuration,
+  DomainsApi,
+} from 'moonemail';
+import type { DisableReceivingDomainRequest } from 'moonemail';
+
+async function example() {
+  console.log("🚀 Testing moonemail SDK...");
+  const config = new Configuration({ 
+    // Configure HTTP bearer authorization: bearerKey
+    accessToken: "YOUR BEARER TOKEN",
+  });
+  const api = new DomainsApi(config);
+
+  const body = {
+    // string
+    id: id_example,
+  } satisfies DisableReceivingDomainRequest;
+
+  try {
+    const data = await api.disableReceivingDomain(body);
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **id** | `string` |  | [Defaults to `undefined`] |
+
+### Return type
+
+[**PrepareReceivingDomain200Response**](PrepareReceivingDomain200Response.md)
 
 ### Authorization
 
@@ -302,6 +378,78 @@ example().catch(console.error);
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
 
+## getReceivingDomain
+
+> GetReceivingDomain200Response getReceivingDomain(id)
+
+Get receiving domain
+
+Read receiving status and required TXT/MX records.  Required permission: &#x60;domains:read&#x60;.
+
+### Example
+
+```ts
+import {
+  Configuration,
+  DomainsApi,
+} from 'moonemail';
+import type { GetReceivingDomainRequest } from 'moonemail';
+
+async function example() {
+  console.log("🚀 Testing moonemail SDK...");
+  const config = new Configuration({ 
+    // Configure HTTP bearer authorization: bearerKey
+    accessToken: "YOUR BEARER TOKEN",
+  });
+  const api = new DomainsApi(config);
+
+  const body = {
+    // string
+    id: id_example,
+  } satisfies GetReceivingDomainRequest;
+
+  try {
+    const data = await api.getReceivingDomain(body);
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **id** | `string` |  | [Defaults to `undefined`] |
+
+### Return type
+
+[**GetReceivingDomain200Response**](GetReceivingDomain200Response.md)
+
+### Authorization
+
+[bearerKey](../README.md#bearerKey)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: `application/json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | Success |  -  |
+| **0** | API error |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
 ## listDomains
 
 > ListDomains200Response listDomains()
@@ -346,6 +494,78 @@ This endpoint does not need any parameter.
 ### Return type
 
 [**ListDomains200Response**](ListDomains200Response.md)
+
+### Authorization
+
+[bearerKey](../README.md#bearerKey)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: `application/json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | Success |  -  |
+| **0** | API error |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
+## prepareReceivingDomain
+
+> PrepareReceivingDomain200Response prepareReceivingDomain(id)
+
+Prepare receiving domain
+
+Prepare receiving DNS records for a dedicated subdomain. Does not change DNS.  Required permission: &#x60;domains:write&#x60;.
+
+### Example
+
+```ts
+import {
+  Configuration,
+  DomainsApi,
+} from 'moonemail';
+import type { PrepareReceivingDomainRequest } from 'moonemail';
+
+async function example() {
+  console.log("🚀 Testing moonemail SDK...");
+  const config = new Configuration({ 
+    // Configure HTTP bearer authorization: bearerKey
+    accessToken: "YOUR BEARER TOKEN",
+  });
+  const api = new DomainsApi(config);
+
+  const body = {
+    // string
+    id: id_example,
+  } satisfies PrepareReceivingDomainRequest;
+
+  try {
+    const data = await api.prepareReceivingDomain(body);
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **id** | `string` |  | [Defaults to `undefined`] |
+
+### Return type
+
+[**PrepareReceivingDomain200Response**](PrepareReceivingDomain200Response.md)
 
 ### Authorization
 
@@ -493,6 +713,78 @@ example().catch(console.error);
 ### Return type
 
 [**UpdateDomain200Response**](UpdateDomain200Response.md)
+
+### Authorization
+
+[bearerKey](../README.md#bearerKey)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: `application/json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | Success |  -  |
+| **0** | API error |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
+## verifyReceivingDomain
+
+> PrepareReceivingDomain200Response verifyReceivingDomain(id)
+
+Verify receiving domain
+
+Verify sending identity and exact receiving TXT/MX records, then enable receiving. DNS authorization is checked periodically and expires after 24 hours without a successful check.  Required permission: &#x60;domains:write&#x60;.
+
+### Example
+
+```ts
+import {
+  Configuration,
+  DomainsApi,
+} from 'moonemail';
+import type { VerifyReceivingDomainRequest } from 'moonemail';
+
+async function example() {
+  console.log("🚀 Testing moonemail SDK...");
+  const config = new Configuration({ 
+    // Configure HTTP bearer authorization: bearerKey
+    accessToken: "YOUR BEARER TOKEN",
+  });
+  const api = new DomainsApi(config);
+
+  const body = {
+    // string
+    id: id_example,
+  } satisfies VerifyReceivingDomainRequest;
+
+  try {
+    const data = await api.verifyReceivingDomain(body);
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **id** | `string` |  | [Defaults to `undefined`] |
+
+### Return type
+
+[**PrepareReceivingDomain200Response**](PrepareReceivingDomain200Response.md)
 
 ### Authorization
 

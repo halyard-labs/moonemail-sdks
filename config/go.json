@@ -5,7 +5,7 @@
   "gitUserId": "halyard-labs",
   "gitRepoId": "moonemail-sdks/go",
   "packageName": "moonemail",
-  "packageVersion": "0.1.1",
+  "packageVersion": "0.2.0",
   "isGoSubmodule": false,
   "enumUnknownDefaultCase": true
 }

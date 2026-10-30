@@ -7,6 +7,8 @@
 Name | Type
 ------------ | -------------
 `name` | string
+`domainId` | string
+`localPart` | string
 
 ## Example
 
@@ -16,6 +18,8 @@ import type { CreateInboxRequest } from 'moonemail'
 // TODO: Update the object below with actual values
 const example = {
   "name": null,
+  "domainId": null,
+  "localPart": null,
 } satisfies CreateInboxRequest
 
 console.log(example)

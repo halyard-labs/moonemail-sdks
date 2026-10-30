@@ -6,6 +6,8 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **name** | **str** |  | 
+**domain_id** | **UUID** |  | [optional] 
+**local_part** | **str** |  | [optional] 
 
 ## Example
 

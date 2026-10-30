@@ -13,11 +13,11 @@ All URIs are relative to *https://api.moonemail.co*
 
 ## createInbox
 
-> CreateInbox200Response createInbox(createInboxRequest, idempotencyKey)
+> ListInboxes200ResponseDataInner createInbox(createInboxRequest, idempotencyKey)
 
 Create inbox
 
-Create a random receiving address for this team. Name is a label, not an email local-part. Reuse the idempotency key on retries.  Required permission: &#x60;inboxes:write&#x60;.
+Create a generated receiving address, or provide domain_id and local_part for an enabled custom receiving domain. Name is a label. Addresses are never reassigned. Reuse the idempotency key on retries.  Required permission: &#x60;inboxes:write&#x60;.
 
 ### Example
 
@@ -65,7 +65,7 @@ example().catch(console.error);
 
 ### Return type
 
-[**CreateInbox200Response**](CreateInbox200Response.md)
+[**ListInboxes200ResponseDataInner**](ListInboxes200ResponseDataInner.md)
 
 ### Authorization
 
@@ -88,7 +88,7 @@ example().catch(console.error);
 
 ## getInbox
 
-> CreateInbox200Response getInbox(id)
+> ListInboxes200ResponseDataInner getInbox(id)
 
 Get inbox
 
@@ -137,7 +137,7 @@ example().catch(console.error);
 
 ### Return type
 
-[**CreateInbox200Response**](CreateInbox200Response.md)
+[**ListInboxes200ResponseDataInner**](ListInboxes200ResponseDataInner.md)
 
 ### Authorization
 
@@ -235,7 +235,7 @@ example().catch(console.error);
 
 ## updateInbox
 
-> CreateInbox200Response updateInbox(id, updateInboxRequest)
+> ListInboxes200ResponseDataInner updateInbox(id, updateInboxRequest)
 
 Update inbox
 
@@ -287,7 +287,7 @@ example().catch(console.error);
 
 ### Return type
 
-[**CreateInbox200Response**](CreateInbox200Response.md)
+[**ListInboxes200ResponseDataInner**](ListInboxes200ResponseDataInner.md)
 
 ### Authorization
 

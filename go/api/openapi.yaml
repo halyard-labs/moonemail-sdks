@@ -4,10 +4,208 @@ info:
     \ product endpoints, not public discovery, dashboard assets or Stripe inbound\
     \ webhooks. Go handlers enforce state-dependent and cross-field business validation."
   title: Moonemail API
-  version: 0.1.0
+  version: 0.2.0
 servers:
 - url: https://api.moonemail.co
 paths:
+  /domains/{id}/receiving:
+    get:
+      description: |-
+        Read receiving status and required TXT/MX records.
+
+        Required permission: `domains:read`.
+      operationId: get_receiving_domain
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          maxLength: 200
+          minLength: 1
+          pattern: "^[A-Za-z0-9_-]+$"
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/get_receiving_domain_200_response"
+          description: Success
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
+          description: API error
+      security:
+      - bearerKey: []
+      summary: Get receiving domain
+      tags:
+      - Domains
+      x-required-scope: domains:read
+      x-go-handler: getReceivingDomain
+      x-mcp:
+        enabled: true
+        destructive: false
+        idempotent: true
+    post:
+      description: |-
+        Prepare receiving DNS records for a dedicated subdomain. Does not change DNS.
+
+        Required permission: `domains:write`.
+      operationId: prepare_receiving_domain
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          maxLength: 200
+          minLength: 1
+          pattern: "^[A-Za-z0-9_-]+$"
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/prepare_receiving_domain_200_response"
+          description: Success
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
+          description: API error
+      security:
+      - bearerKey: []
+      summary: Prepare receiving domain
+      tags:
+      - Domains
+      x-required-scope: domains:write
+      x-go-handler: prepareReceivingDomain
+      x-mcp:
+        enabled: true
+        destructive: false
+        idempotent: false
+  /domains/{id}/receiving/verify:
+    post:
+      description: |-
+        Verify sending identity and exact receiving TXT/MX records, then enable receiving. DNS authorization is checked periodically and expires after 24 hours without a successful check.
+
+        Required permission: `domains:write`.
+      operationId: verify_receiving_domain
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          maxLength: 200
+          minLength: 1
+          pattern: "^[A-Za-z0-9_-]+$"
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/prepare_receiving_domain_200_response"
+          description: Success
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
+          description: API error
+      security:
+      - bearerKey: []
+      summary: Verify receiving domain
+      tags:
+      - Domains
+      x-required-scope: domains:write
+      x-go-handler: verifyReceivingDomain
+      x-mcp:
+        enabled: true
+        destructive: true
+        idempotent: false
+  /domains/{id}/receiving/disable:
+    post:
+      description: |-
+        Disable all incoming mail on this subdomain. Does not change DNS or delete stored messages.
+
+        Required permission: `domains:write`.
+      operationId: disable_receiving_domain
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          maxLength: 200
+          minLength: 1
+          pattern: "^[A-Za-z0-9_-]+$"
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/prepare_receiving_domain_200_response"
+          description: Success
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
+          description: API error
+      security:
+      - bearerKey: []
+      summary: Disable receiving domain
+      tags:
+      - Domains
+      x-required-scope: domains:write
+      x-go-handler: disableReceivingDomain
+      x-mcp:
+        enabled: true
+        destructive: true
+        idempotent: false
+  /receiving/domains:
+    get:
+      description: |-
+        List custom receiving domains for this team.
+
+        Required permission: `domains:read`.
+      operationId: list_receiving_domains
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/list_receiving_domains_200_response"
+          description: Success
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
+          description: API error
+      security:
+      - bearerKey: []
+      summary: List receiving domains
+      tags:
+      - Receiving
+      x-required-scope: domains:read
+      x-go-handler: listReceivingDomains
+      x-mcp:
+        enabled: true
+        destructive: false
+        idempotent: true
   /inboxes:
     get:
       description: |-
@@ -44,7 +242,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -59,7 +257,7 @@ paths:
         idempotent: true
     post:
       description: |-
-        Create a random receiving address for this team. Name is a label, not an email local-part. Reuse the idempotency key on retries.
+        Create a generated receiving address, or provide domain_id and local_part for an enabled custom receiving domain. Name is a label. Addresses are never reassigned. Reuse the idempotency key on retries.
 
         Required permission: `inboxes:write`.
       operationId: create_inbox
@@ -86,13 +284,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/create_inbox_200_response"
+                $ref: "#/components/schemas/list_inboxes_200_response_data_inner"
           description: Success
         default:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -129,13 +327,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/create_inbox_200_response"
+                $ref: "#/components/schemas/list_inboxes_200_response_data_inner"
           description: Success
         default:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -176,13 +374,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/create_inbox_200_response"
+                $ref: "#/components/schemas/list_inboxes_200_response_data_inner"
           description: Success
         default:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -231,7 +429,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -273,7 +471,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -315,7 +513,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -365,7 +563,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -407,7 +605,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -438,7 +636,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -497,7 +695,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -545,7 +743,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -600,7 +798,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -643,7 +841,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -690,7 +888,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -732,7 +930,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -774,7 +972,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -805,7 +1003,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -841,7 +1039,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -883,7 +1081,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -899,7 +1097,7 @@ paths:
   /domains/{id}:
     delete:
       description: |-
-        Remove a sending domain, interrupting sending through it. Only when explicitly requested.
+        Remove a domain, interrupting sending and receiving through it. Stored received messages remain subject to retention. Only when explicitly requested.
 
         Required permission: `domains:delete`.
       operationId: delete_domain
@@ -925,7 +1123,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -966,7 +1164,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -1013,7 +1211,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -1055,7 +1253,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -1086,7 +1284,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -1122,7 +1320,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -1164,7 +1362,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -1195,7 +1393,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -1231,7 +1429,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -1273,7 +1471,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -1314,7 +1512,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -1361,7 +1559,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -1403,7 +1601,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -1434,7 +1632,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -1470,7 +1668,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -1511,7 +1709,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/list_inboxes_default_response"
+                $ref: "#/components/schemas/get_receiving_domain_default_response"
           description: API error
       security:
       - bearerKey: []
@@ -1699,11 +1897,54 @@ components:
       - data
       - has_more
       - object
+    get_receiving_domain_default_response:
+      example:
+        statusCode: 6
+        name: name
+        message: message
+      properties:
+        statusCode:
+          type: integer
+        name:
+          type: string
+        message:
+          type: string
+      required:
+      - message
+      - name
+      - statusCode
+    prepare_receiving_domain_200_response_records_inner:
+      additionalProperties: true
+      example:
+        type: type
+        name: name
+        value: value
+        priority: priority
+      properties:
+        type:
+          type: string
+        name:
+          type: string
+        value:
+          type: string
+        priority:
+          type: string
+      required:
+      - name
+      - type
+      - value
     create_inbox_request:
       additionalProperties: {}
       properties:
         name:
           maxLength: 100
+          minLength: 1
+          type: string
+        domain_id:
+          format: uuid
+          type: string
+        local_part:
+          maxLength: 64
           minLength: 1
           type: string
       required:
@@ -1869,6 +2110,26 @@ components:
           type: string
       required:
       - email
+    get_receiving_domain_200_response_records_inner:
+      additionalProperties: {}
+      example:
+        type: type
+        name: name
+        value: value
+        priority: priority
+      properties:
+        type:
+          type: string
+        name:
+          type: string
+        value:
+          type: string
+        priority:
+          type: string
+      required:
+      - name
+      - type
+      - value
     update_webhook_200_response:
       additionalProperties: {}
       example:
@@ -2160,42 +2421,6 @@ components:
       - message
       - subType
       - type
-    create_inbox_200_response:
-      additionalProperties: true
-      example:
-        id: id
-        name: name
-        address: address
-        status: enabled
-        created_at: created_at
-        aliases:
-        - aliases
-        - aliases
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        address:
-          type: string
-        status:
-          enum:
-          - enabled
-          - disabled
-          type: string
-        created_at:
-          type: string
-        aliases:
-          items:
-            type: string
-          type: array
-          default: null
-      required:
-      - address
-      - created_at
-      - id
-      - name
-      - status
     get_received_raw_200_response:
       additionalProperties: {}
       example:
@@ -2405,6 +2630,7 @@ components:
         aliases:
         - aliases
         - aliases
+        domain_id: domain_id
       properties:
         id:
           type: string
@@ -2424,6 +2650,8 @@ components:
             type: string
           type: array
           default: null
+        domain_id:
+          type: string
       required:
       - address
       - created_at
@@ -2495,6 +2723,7 @@ components:
           aliases:
           - aliases
           - aliases
+          domain_id: domain_id
         - id: id
           name: name
           address: address
@@ -2503,6 +2732,7 @@ components:
           aliases:
           - aliases
           - aliases
+          domain_id: domain_id
       properties:
         object:
           enum:
@@ -2578,6 +2808,51 @@ components:
       - deleted
       - id
       - object
+    prepare_receiving_domain_200_response:
+      additionalProperties: {}
+      example:
+        domain_id: domain_id
+        name: name
+        status: pending
+        verified_until: 0
+        created_at: created_at
+        records:
+        - type: type
+          name: name
+          value: value
+          priority: priority
+        - type: type
+          name: name
+          value: value
+          priority: priority
+      properties:
+        domain_id:
+          type: string
+        name:
+          type: string
+        status:
+          enum:
+          - pending
+          - enabled
+          - disabled
+          - deleted
+          type: string
+        verified_until:
+          type: integer
+        created_at:
+          type: string
+        records:
+          items:
+            $ref: "#/components/schemas/prepare_receiving_domain_200_response_records_inner"
+          type: array
+          default: null
+      required:
+      - created_at
+      - domain_id
+      - name
+      - records
+      - status
+      - verified_until
     list_emails_200_response:
       additionalProperties: {}
       example:
@@ -2747,22 +3022,56 @@ components:
       required:
       - endpoint
       - events
-    list_inboxes_default_response:
+    list_receiving_domains_200_response:
+      additionalProperties: {}
       example:
-        statusCode: 0
-        name: name
-        message: message
+        object: list
+        has_more: true
+        data:
+        - domain_id: domain_id
+          name: name
+          status: pending
+          verified_until: 0
+          created_at: created_at
+          records:
+          - type: type
+            name: name
+            value: value
+            priority: priority
+          - type: type
+            name: name
+            value: value
+            priority: priority
+        - domain_id: domain_id
+          name: name
+          status: pending
+          verified_until: 0
+          created_at: created_at
+          records:
+          - type: type
+            name: name
+            value: value
+            priority: priority
+          - type: type
+            name: name
+            value: value
+            priority: priority
       properties:
-        statusCode:
-          type: integer
-        name:
+        object:
+          enum:
+          - list
           type: string
-        message:
-          type: string
+        has_more:
+          type: boolean
+        data:
+          items:
+            $ref: "#/components/schemas/prepare_receiving_domain_200_response"
+          type: array
+          default: null
       required:
-      - message
-      - name
-      - statusCode
+      - data
+      - has_more
+      - object
     list_email_events_200_response_data_inner:
       additionalProperties: {}
       example:
@@ -3610,6 +3919,51 @@ components:
           type: string
       required:
       - name
+    get_receiving_domain_200_response:
+      additionalProperties: {}
+      example:
+        domain_id: domain_id
+        name: name
+        status: pending
+        verified_until: 0
+        created_at: created_at
+        records:
+        - type: type
+          name: name
+          value: value
+          priority: priority
+        - type: type
+          name: name
+          value: value
+          priority: priority
+      properties:
+        domain_id:
+          type: string
+        name:
+          type: string
+        status:
+          enum:
+          - pending
+          - enabled
+          - disabled
+          - deleted
+          type: string
+        verified_until:
+          type: integer
+        created_at:
+          type: string
+        records:
+          items:
+            $ref: "#/components/schemas/get_receiving_domain_200_response_records_inner"
+          type: array
+          default: null
+      required:
+      - created_at
+      - domain_id
+      - name
+      - records
+      - status
+      - verified_until
     list_emails_200_response_data_inner:
       additionalProperties: {}
       example:

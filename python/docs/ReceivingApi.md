@@ -9,6 +9,7 @@ Method | HTTP request | Description
 [**get_received_raw**](ReceivingApi.md#get_received_raw) | **GET** /emails/receiving/{id}/raw | Get received raw
 [**list_received_attachments**](ReceivingApi.md#list_received_attachments) | **GET** /emails/receiving/{id}/attachments | List received attachments
 [**list_received_emails**](ReceivingApi.md#list_received_emails) | **GET** /emails/receiving | List received emails
+[**list_receiving_domains**](ReceivingApi.md#list_receiving_domains) | **GET** /receiving/domains | List receiving domains
 
 
 # **get_received_attachment**
@@ -401,6 +402,83 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**ListReceivedEmails200Response**](ListReceivedEmails200Response.md)
+
+### Authorization
+
+[bearerKey](../README.md#bearerKey)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Success |  -  |
+**0** | API error |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **list_receiving_domains**
+> ListReceivingDomains200Response list_receiving_domains()
+
+List receiving domains
+
+List custom receiving domains for this team.
+
+Required permission: `domains:read`.
+
+### Example
+
+* Bearer Authentication (bearerKey):
+
+```python
+import moonemail
+from moonemail.models.list_receiving_domains200_response import ListReceivingDomains200Response
+from moonemail.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://api.moonemail.co
+# See configuration.py for a list of all supported configuration parameters.
+configuration = moonemail.Configuration(
+    host = "https://api.moonemail.co"
+)
+
+# The client must configure the authentication and authorization parameters
+# in accordance with the API server security policy.
+# Examples for each auth method are provided below, use the example that
+# satisfies your auth use case.
+
+# Configure Bearer authorization: bearerKey
+configuration = moonemail.Configuration(
+    access_token = os.environ["BEARER_TOKEN"]
+)
+
+# Enter a context with an instance of the API client
+with moonemail.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = moonemail.ReceivingApi(api_client)
+
+    try:
+        # List receiving domains
+        api_response = api_instance.list_receiving_domains()
+        print("The response of ReceivingApi->list_receiving_domains:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling ReceivingApi->list_receiving_domains: %s\n" % e)
+```
+
+
+
+### Parameters
+
+This endpoint does not need any parameter.
+
+### Return type
+
+[**ListReceivingDomains200Response**](ListReceivingDomains200Response.md)
 
 ### Authorization
 

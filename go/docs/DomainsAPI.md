@@ -6,11 +6,15 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**CreateDomain**](DomainsAPI.md#CreateDomain) | **Post** /domains | Create domain
 [**DeleteDomain**](DomainsAPI.md#DeleteDomain) | **Delete** /domains/{id} | Delete domain
+[**DisableReceivingDomain**](DomainsAPI.md#DisableReceivingDomain) | **Post** /domains/{id}/receiving/disable | Disable receiving domain
 [**GetDomain**](DomainsAPI.md#GetDomain) | **Get** /domains/{id} | Get domain
 [**GetDomainHealth**](DomainsAPI.md#GetDomainHealth) | **Get** /domains/{id}/health | Get domain health
+[**GetReceivingDomain**](DomainsAPI.md#GetReceivingDomain) | **Get** /domains/{id}/receiving | Get receiving domain
 [**ListDomains**](DomainsAPI.md#ListDomains) | **Get** /domains | List domains
+[**PrepareReceivingDomain**](DomainsAPI.md#PrepareReceivingDomain) | **Post** /domains/{id}/receiving | Prepare receiving domain
 [**UpdateDomain**](DomainsAPI.md#UpdateDomain) | **Patch** /domains/{id} | Update domain
 [**VerifyDomain**](DomainsAPI.md#VerifyDomain) | **Post** /domains/{id}/verify | Verify domain
+[**VerifyReceivingDomain**](DomainsAPI.md#VerifyReceivingDomain) | **Post** /domains/{id}/receiving/verify | Verify receiving domain
 
 
 
@@ -135,6 +139,76 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**DeleteDomain200Response**](DeleteDomain200Response.md)
+
+### Authorization
+
+[bearerKey](../README.md#bearerKey)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## DisableReceivingDomain
+
+> PrepareReceivingDomain200Response DisableReceivingDomain(ctx, id).Execute()
+
+Disable receiving domain
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/halyard-labs/moonemail-sdks/go"
+)
+
+func main() {
+	id := "id_example" // string | 
+
+	configuration := openapiclient.NewConfiguration()
+	apiClient := openapiclient.NewAPIClient(configuration)
+	resp, r, err := apiClient.DomainsAPI.DisableReceivingDomain(context.Background(), id).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `DomainsAPI.DisableReceivingDomain``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `DisableReceivingDomain`: PrepareReceivingDomain200Response
+	fmt.Fprintf(os.Stdout, "Response from `DomainsAPI.DisableReceivingDomain`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**id** | **string** |  | 
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiDisableReceivingDomainRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+### Return type
+
+[**PrepareReceivingDomain200Response**](PrepareReceivingDomain200Response.md)
 
 ### Authorization
 
@@ -290,6 +364,76 @@ Name | Type | Description  | Notes
 [[Back to README]](../README.md)
 
 
+## GetReceivingDomain
+
+> GetReceivingDomain200Response GetReceivingDomain(ctx, id).Execute()
+
+Get receiving domain
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/halyard-labs/moonemail-sdks/go"
+)
+
+func main() {
+	id := "id_example" // string | 
+
+	configuration := openapiclient.NewConfiguration()
+	apiClient := openapiclient.NewAPIClient(configuration)
+	resp, r, err := apiClient.DomainsAPI.GetReceivingDomain(context.Background(), id).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `DomainsAPI.GetReceivingDomain``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `GetReceivingDomain`: GetReceivingDomain200Response
+	fmt.Fprintf(os.Stdout, "Response from `DomainsAPI.GetReceivingDomain`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**id** | **string** |  | 
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiGetReceivingDomainRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+### Return type
+
+[**GetReceivingDomain200Response**](GetReceivingDomain200Response.md)
+
+### Authorization
+
+[bearerKey](../README.md#bearerKey)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
 ## ListDomains
 
 > ListDomains200Response ListDomains(ctx).Execute()
@@ -336,6 +480,76 @@ Other parameters are passed through a pointer to a apiListDomainsRequest struct 
 ### Return type
 
 [**ListDomains200Response**](ListDomains200Response.md)
+
+### Authorization
+
+[bearerKey](../README.md#bearerKey)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## PrepareReceivingDomain
+
+> PrepareReceivingDomain200Response PrepareReceivingDomain(ctx, id).Execute()
+
+Prepare receiving domain
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/halyard-labs/moonemail-sdks/go"
+)
+
+func main() {
+	id := "id_example" // string | 
+
+	configuration := openapiclient.NewConfiguration()
+	apiClient := openapiclient.NewAPIClient(configuration)
+	resp, r, err := apiClient.DomainsAPI.PrepareReceivingDomain(context.Background(), id).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `DomainsAPI.PrepareReceivingDomain``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `PrepareReceivingDomain`: PrepareReceivingDomain200Response
+	fmt.Fprintf(os.Stdout, "Response from `DomainsAPI.PrepareReceivingDomain`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**id** | **string** |  | 
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiPrepareReceivingDomainRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+### Return type
+
+[**PrepareReceivingDomain200Response**](PrepareReceivingDomain200Response.md)
 
 ### Authorization
 
@@ -478,6 +692,76 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**UpdateDomain200Response**](UpdateDomain200Response.md)
+
+### Authorization
+
+[bearerKey](../README.md#bearerKey)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## VerifyReceivingDomain
+
+> PrepareReceivingDomain200Response VerifyReceivingDomain(ctx, id).Execute()
+
+Verify receiving domain
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/halyard-labs/moonemail-sdks/go"
+)
+
+func main() {
+	id := "id_example" // string | 
+
+	configuration := openapiclient.NewConfiguration()
+	apiClient := openapiclient.NewAPIClient(configuration)
+	resp, r, err := apiClient.DomainsAPI.VerifyReceivingDomain(context.Background(), id).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `DomainsAPI.VerifyReceivingDomain``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `VerifyReceivingDomain`: PrepareReceivingDomain200Response
+	fmt.Fprintf(os.Stdout, "Response from `DomainsAPI.VerifyReceivingDomain`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**id** | **string** |  | 
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiVerifyReceivingDomainRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+### Return type
+
+[**PrepareReceivingDomain200Response**](PrepareReceivingDomain200Response.md)
 
 ### Authorization
 

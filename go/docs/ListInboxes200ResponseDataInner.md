@@ -10,6 +10,7 @@ Name | Type | Description | Notes
 **Status** | **string** |  | 
 **CreatedAt** | **string** |  | 
 **Aliases** | Pointer to **[]string** |  | [optional] 
+**DomainId** | Pointer to **string** |  | [optional] 
 
 ## Methods
 
@@ -154,6 +155,31 @@ SetAliases sets Aliases field to given value.
 `func (o *ListInboxes200ResponseDataInner) HasAliases() bool`
 
 HasAliases returns a boolean if a field has been set.
+
+### GetDomainId
+
+`func (o *ListInboxes200ResponseDataInner) GetDomainId() string`
+
+GetDomainId returns the DomainId field if non-nil, zero value otherwise.
+
+### GetDomainIdOk
+
+`func (o *ListInboxes200ResponseDataInner) GetDomainIdOk() (*string, bool)`
+
+GetDomainIdOk returns a tuple with the DomainId field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDomainId
+
+`func (o *ListInboxes200ResponseDataInner) SetDomainId(v string)`
+
+SetDomainId sets DomainId field to given value.
+
+### HasDomainId
+
+`func (o *ListInboxes200ResponseDataInner) HasDomainId() bool`
+
+HasDomainId returns a boolean if a field has been set.
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

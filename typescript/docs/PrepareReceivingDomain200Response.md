@@ -1,26 +1,32 @@
 
-# ListInboxesDefaultResponse
+# PrepareReceivingDomain200Response
 
 
 ## Properties
 
 Name | Type
 ------------ | -------------
-`statusCode` | number
+`domainId` | string
 `name` | string
-`message` | string
+`status` | string
+`verifiedUntil` | number
+`createdAt` | string
+`records` | [Array&lt;PrepareReceivingDomain200ResponseRecordsInner&gt;](PrepareReceivingDomain200ResponseRecordsInner.md)
 
 ## Example
 
 ```typescript
-import type { ListInboxesDefaultResponse } from 'moonemail'
+import type { PrepareReceivingDomain200Response } from 'moonemail'
 
 // TODO: Update the object below with actual values
 const example = {
-  "statusCode": null,
+  "domainId": null,
   "name": null,
-  "message": null,
-} satisfies ListInboxesDefaultResponse
+  "status": null,
+  "verifiedUntil": null,
+  "createdAt": null,
+  "records": null,
+} satisfies PrepareReceivingDomain200Response
 
 console.log(example)
 
@@ -29,7 +35,7 @@ const exampleJSON: string = JSON.stringify(example)
 console.log(exampleJSON)
 
 // Parse the JSON string back to an object
-const exampleParsed = JSON.parse(exampleJSON) as ListInboxesDefaultResponse
+const exampleParsed = JSON.parse(exampleJSON) as PrepareReceivingDomain200Response
 console.log(exampleParsed)
 ```
 

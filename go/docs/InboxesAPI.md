@@ -13,7 +13,7 @@ Method | HTTP request | Description
 
 ## CreateInbox
 
-> CreateInbox200Response CreateInbox(ctx).CreateInboxRequest(createInboxRequest).IdempotencyKey(idempotencyKey).Execute()
+> ListInboxes200ResponseDataInner CreateInbox(ctx).CreateInboxRequest(createInboxRequest).IdempotencyKey(idempotencyKey).Execute()
 
 Create inbox
 
@@ -42,7 +42,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Error when calling `InboxesAPI.CreateInbox``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `CreateInbox`: CreateInbox200Response
+	// response from `CreateInbox`: ListInboxes200ResponseDataInner
 	fmt.Fprintf(os.Stdout, "Response from `InboxesAPI.CreateInbox`: %v\n", resp)
 }
 ```
@@ -63,7 +63,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**CreateInbox200Response**](CreateInbox200Response.md)
+[**ListInboxes200ResponseDataInner**](ListInboxes200ResponseDataInner.md)
 
 ### Authorization
 
@@ -81,7 +81,7 @@ Name | Type | Description  | Notes
 
 ## GetInbox
 
-> CreateInbox200Response GetInbox(ctx, id).Execute()
+> ListInboxes200ResponseDataInner GetInbox(ctx, id).Execute()
 
 Get inbox
 
@@ -109,7 +109,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Error when calling `InboxesAPI.GetInbox``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `GetInbox`: CreateInbox200Response
+	// response from `GetInbox`: ListInboxes200ResponseDataInner
 	fmt.Fprintf(os.Stdout, "Response from `InboxesAPI.GetInbox`: %v\n", resp)
 }
 ```
@@ -133,7 +133,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**CreateInbox200Response**](CreateInbox200Response.md)
+[**ListInboxes200ResponseDataInner**](ListInboxes200ResponseDataInner.md)
 
 ### Authorization
 
@@ -219,7 +219,7 @@ Name | Type | Description  | Notes
 
 ## UpdateInbox
 
-> CreateInbox200Response UpdateInbox(ctx, id).UpdateInboxRequest(updateInboxRequest).Execute()
+> ListInboxes200ResponseDataInner UpdateInbox(ctx, id).UpdateInboxRequest(updateInboxRequest).Execute()
 
 Update inbox
 
@@ -248,7 +248,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Error when calling `InboxesAPI.UpdateInbox``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `UpdateInbox`: CreateInbox200Response
+	// response from `UpdateInbox`: ListInboxes200ResponseDataInner
 	fmt.Fprintf(os.Stdout, "Response from `InboxesAPI.UpdateInbox`: %v\n", resp)
 }
 ```
@@ -273,7 +273,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**CreateInbox200Response**](CreateInbox200Response.md)
+[**ListInboxes200ResponseDataInner**](ListInboxes200ResponseDataInner.md)
 
 ### Authorization
 

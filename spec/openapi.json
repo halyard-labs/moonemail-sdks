@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Moonemail API",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Generated request, response and authorization contract. Covers authenticated product endpoints, not public discovery, dashboard assets or Stripe inbound webhooks. Go handlers enforce state-dependent and cross-field business validation."
   },
   "servers": [
@@ -20,11 +20,672 @@
     }
   },
   "paths": {
+    "/domains/{id}/receiving": {
+      "post": {
+        "operationId": "prepare_receiving_domain",
+        "summary": "Prepare receiving domain",
+        "description": "Prepare receiving DNS records for a dedicated subdomain. Does not change DNS.\n\nRequired permission: `domains:write`.",
+        "tags": [
+          "Domains"
+        ],
+        "security": [
+          {
+            "bearerKey": []
+          }
+        ],
+        "x-required-scope": "domains:write",
+        "x-go-handler": "prepareReceivingDomain",
+        "x-mcp": {
+          "enabled": true,
+          "destructive": false,
+          "idempotent": false
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "domain_id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "pending",
+                        "enabled",
+                        "disabled",
+                        "deleted"
+                      ]
+                    },
+                    "verified_until": {
+                      "type": "integer"
+                    },
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "records": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": "string"
+                          },
+                          "priority": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "name",
+                          "value"
+                        ],
+                        "additionalProperties": true
+                      }
+                    }
+                  },
+                  "required": [
+                    "domain_id",
+                    "name",
+                    "status",
+                    "verified_until",
+                    "created_at",
+                    "records"
+                  ],
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "statusCode",
+                    "name",
+                    "message"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "get_receiving_domain",
+        "summary": "Get receiving domain",
+        "description": "Read receiving status and required TXT/MX records.\n\nRequired permission: `domains:read`.",
+        "tags": [
+          "Domains"
+        ],
+        "security": [
+          {
+            "bearerKey": []
+          }
+        ],
+        "x-required-scope": "domains:read",
+        "x-go-handler": "getReceivingDomain",
+        "x-mcp": {
+          "enabled": true,
+          "destructive": false,
+          "idempotent": true
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "domain_id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "pending",
+                        "enabled",
+                        "disabled",
+                        "deleted"
+                      ]
+                    },
+                    "verified_until": {
+                      "type": "integer"
+                    },
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "records": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": "string"
+                          },
+                          "priority": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "name",
+                          "value"
+                        ],
+                        "additionalProperties": true
+                      }
+                    }
+                  },
+                  "required": [
+                    "domain_id",
+                    "name",
+                    "status",
+                    "verified_until",
+                    "created_at",
+                    "records"
+                  ],
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "statusCode",
+                    "name",
+                    "message"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/domains/{id}/receiving/verify": {
+      "post": {
+        "operationId": "verify_receiving_domain",
+        "summary": "Verify receiving domain",
+        "description": "Verify sending identity and exact receiving TXT/MX records, then enable receiving. DNS authorization is checked periodically and expires after 24 hours without a successful check.\n\nRequired permission: `domains:write`.",
+        "tags": [
+          "Domains"
+        ],
+        "security": [
+          {
+            "bearerKey": []
+          }
+        ],
+        "x-required-scope": "domains:write",
+        "x-go-handler": "verifyReceivingDomain",
+        "x-mcp": {
+          "enabled": true,
+          "destructive": true,
+          "idempotent": false
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "domain_id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "pending",
+                        "enabled",
+                        "disabled",
+                        "deleted"
+                      ]
+                    },
+                    "verified_until": {
+                      "type": "integer"
+                    },
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "records": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": "string"
+                          },
+                          "priority": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "name",
+                          "value"
+                        ],
+                        "additionalProperties": true
+                      }
+                    }
+                  },
+                  "required": [
+                    "domain_id",
+                    "name",
+                    "status",
+                    "verified_until",
+                    "created_at",
+                    "records"
+                  ],
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "statusCode",
+                    "name",
+                    "message"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/domains/{id}/receiving/disable": {
+      "post": {
+        "operationId": "disable_receiving_domain",
+        "summary": "Disable receiving domain",
+        "description": "Disable all incoming mail on this subdomain. Does not change DNS or delete stored messages.\n\nRequired permission: `domains:write`.",
+        "tags": [
+          "Domains"
+        ],
+        "security": [
+          {
+            "bearerKey": []
+          }
+        ],
+        "x-required-scope": "domains:write",
+        "x-go-handler": "disableReceivingDomain",
+        "x-mcp": {
+          "enabled": true,
+          "destructive": true,
+          "idempotent": false
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "pattern": "^[A-Za-z0-9_-]+$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "domain_id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "pending",
+                        "enabled",
+                        "disabled",
+                        "deleted"
+                      ]
+                    },
+                    "verified_until": {
+                      "type": "integer"
+                    },
+                    "created_at": {
+                      "type": "string"
+                    },
+                    "records": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": "string"
+                          },
+                          "priority": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "name",
+                          "value"
+                        ],
+                        "additionalProperties": true
+                      }
+                    }
+                  },
+                  "required": [
+                    "domain_id",
+                    "name",
+                    "status",
+                    "verified_until",
+                    "created_at",
+                    "records"
+                  ],
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "statusCode",
+                    "name",
+                    "message"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/receiving/domains": {
+      "get": {
+        "operationId": "list_receiving_domains",
+        "summary": "List receiving domains",
+        "description": "List custom receiving domains for this team.\n\nRequired permission: `domains:read`.",
+        "tags": [
+          "Receiving"
+        ],
+        "security": [
+          {
+            "bearerKey": []
+          }
+        ],
+        "x-required-scope": "domains:read",
+        "x-go-handler": "listReceivingDomains",
+        "x-mcp": {
+          "enabled": true,
+          "destructive": false,
+          "idempotent": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "object": {
+                      "type": "string",
+                      "const": "list"
+                    },
+                    "has_more": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "domain_id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "pending",
+                              "enabled",
+                              "disabled",
+                              "deleted"
+                            ]
+                          },
+                          "verified_until": {
+                            "type": "integer"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "records": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "type": "string"
+                                },
+                                "priority": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "type",
+                                "name",
+                                "value"
+                              ],
+                              "additionalProperties": true
+                            }
+                          }
+                        },
+                        "required": [
+                          "domain_id",
+                          "name",
+                          "status",
+                          "verified_until",
+                          "created_at",
+                          "records"
+                        ],
+                        "additionalProperties": true
+                      }
+                    }
+                  },
+                  "required": [
+                    "object",
+                    "has_more",
+                    "data"
+                  ],
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "API error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "statusCode",
+                    "name",
+                    "message"
+                  ],
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/inboxes": {
       "post": {
         "operationId": "create_inbox",
         "summary": "Create inbox",
-        "description": "Create a random receiving address for this team. Name is a label, not an email local-part. Reuse the idempotency key on retries.\n\nRequired permission: `inboxes:write`.",
+        "description": "Create a generated receiving address, or provide domain_id and local_part for an enabled custom receiving domain. Name is a label. Addresses are never reassigned. Reuse the idempotency key on retries.\n\nRequired permission: `inboxes:write`.",
         "tags": [
           "Inboxes"
         ],
@@ -65,6 +726,15 @@
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 100
+                  },
+                  "domain_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "local_part": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
                   }
                 },
                 "required": [
@@ -107,6 +777,9 @@
                       "items": {
                         "type": "string"
                       }
+                    },
+                    "domain_id": {
+                      "type": "string"
                     }
                   },
                   "required": [
@@ -233,6 +906,9 @@
                             "items": {
                               "type": "string"
                             }
+                          },
+                          "domain_id": {
+                            "type": "string"
                           }
                         },
                         "required": [
@@ -350,6 +1026,9 @@
                       "items": {
                         "type": "string"
                       }
+                    },
+                    "domain_id": {
+                      "type": "string"
                     }
                   },
                   "required": [
@@ -479,6 +1158,9 @@
                       "items": {
                         "type": "string"
                       }
+                    },
+                    "domain_id": {
+                      "type": "string"
                     }
                   },
                   "required": [
@@ -3633,7 +4315,7 @@
       "delete": {
         "operationId": "delete_domain",
         "summary": "Delete domain",
-        "description": "Remove a sending domain, interrupting sending through it. Only when explicitly requested.\n\nRequired permission: `domains:delete`.",
+        "description": "Remove a domain, interrupting sending and receiving through it. Stored received messages remain subject to retention. Only when explicitly requested.\n\nRequired permission: `domains:delete`.",
         "tags": [
           "Domains"
         ],

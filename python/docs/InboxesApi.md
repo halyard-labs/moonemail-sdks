@@ -11,11 +11,11 @@ Method | HTTP request | Description
 
 
 # **create_inbox**
-> CreateInbox200Response create_inbox(create_inbox_request, idempotency_key=idempotency_key)
+> ListInboxes200ResponseDataInner create_inbox(create_inbox_request, idempotency_key=idempotency_key)
 
 Create inbox
 
-Create a random receiving address for this team. Name is a label, not an email local-part. Reuse the idempotency key on retries.
+Create a generated receiving address, or provide domain_id and local_part for an enabled custom receiving domain. Name is a label. Addresses are never reassigned. Reuse the idempotency key on retries.
 
 Required permission: `inboxes:write`.
 
@@ -25,8 +25,8 @@ Required permission: `inboxes:write`.
 
 ```python
 import moonemail
-from moonemail.models.create_inbox200_response import CreateInbox200Response
 from moonemail.models.create_inbox_request import CreateInboxRequest
+from moonemail.models.list_inboxes200_response_data_inner import ListInboxes200ResponseDataInner
 from moonemail.rest import ApiException
 from pprint import pprint
 
@@ -74,7 +74,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**CreateInbox200Response**](CreateInbox200Response.md)
+[**ListInboxes200ResponseDataInner**](ListInboxes200ResponseDataInner.md)
 
 ### Authorization
 
@@ -95,7 +95,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **get_inbox**
-> CreateInbox200Response get_inbox(id)
+> ListInboxes200ResponseDataInner get_inbox(id)
 
 Get inbox
 
@@ -109,7 +109,7 @@ Required permission: `inboxes:read`.
 
 ```python
 import moonemail
-from moonemail.models.create_inbox200_response import CreateInbox200Response
+from moonemail.models.list_inboxes200_response_data_inner import ListInboxes200ResponseDataInner
 from moonemail.rest import ApiException
 from pprint import pprint
 
@@ -155,7 +155,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**CreateInbox200Response**](CreateInbox200Response.md)
+[**ListInboxes200ResponseDataInner**](ListInboxes200ResponseDataInner.md)
 
 ### Authorization
 
@@ -259,7 +259,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **update_inbox**
-> CreateInbox200Response update_inbox(id, update_inbox_request)
+> ListInboxes200ResponseDataInner update_inbox(id, update_inbox_request)
 
 Update inbox
 
@@ -273,7 +273,7 @@ Required permission: `inboxes:write`.
 
 ```python
 import moonemail
-from moonemail.models.create_inbox200_response import CreateInbox200Response
+from moonemail.models.list_inboxes200_response_data_inner import ListInboxes200ResponseDataInner
 from moonemail.models.update_inbox_request import UpdateInboxRequest
 from moonemail.rest import ApiException
 from pprint import pprint
@@ -322,7 +322,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**CreateInbox200Response**](CreateInbox200Response.md)
+[**ListInboxes200ResponseDataInner**](ListInboxes200ResponseDataInner.md)
 
 ### Authorization
 
